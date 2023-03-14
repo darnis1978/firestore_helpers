@@ -1,6 +1,6 @@
 name: firestore_helpers
 description: A new Flutter package project.
-version: 0.0.1
+version: 0.0.2
 
 environment:
   sdk: '>=2.19.4 <3.0.0'

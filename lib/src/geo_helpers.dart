@@ -237,15 +237,15 @@ typedef DistanceMapper<T> = T Function(T item, double itemsDistance);
 /// Using [serverSideConstraints] or  [serverSideOrdering] almost always requires to create an index for
 /// this field. Check your debug output for a message from FireStore with
 /// a link to create them
-Stream<List<T>> getDataInArea<T>(
+Stream<List<T?>> getDataInArea<T>(
     {required Area area,
     required Query source,
     required DocumentMapper<T> mapper,
     required String locationFieldNameInDB,
-    LocationAccessor<T>? locationAccessor,
-    List<ItemFilter<T>>? clientSidefilters,
+    LocationAccessor<T?>? locationAccessor,
+    List<ItemFilter<T?>>? clientSidefilters,
     DistanceMapper<T>? distanceMapper,
-    DistanceAccessor<T>? distanceAccessor,
+    DistanceAccessor<T?>? distanceAccessor,
     bool sortDecending = false,
     List<QueryConstraint>? serverSideConstraints,
     List<OrderConstraint>? serverSideOrdering}) {
@@ -276,7 +276,7 @@ Stream<List<T>> getDataInArea<T>(
     clientSidefilters = [(item) => item != null];
   }
 
-  return getDataFromQuery<T /*!*/ >(
+  return getDataFromQuery<T? /*!*/ >(
       query: query,
       mapper: (docSnapshot) {
         // get a real objects from FireStore
@@ -285,9 +285,9 @@ Stream<List<T>> getDataInArea<T>(
         if (locationAccessor != null) {
           distance = area.distanceToCenter(locationAccessor(item!));
           // We might get places outside the target circle at the corners of the surrounding square
-          // if (distance > area.radiusInKilometers) {
-          //   return null;
-          // }
+          if (distance > area.radiusInKilometers) {
+            return null;
+          }
           if (distanceMapper != null) {
             return distanceMapper(item, distance);
           }
